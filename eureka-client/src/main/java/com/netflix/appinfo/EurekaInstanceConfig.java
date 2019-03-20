@@ -26,6 +26,8 @@ import com.google.inject.ImplementedBy;
  * the most common way of doing it or by other means to get the information
  * necessary to talk to other instances registered with <em>Eureka</em>.
  *
+ * 这些配置信息针对注册到Eureka Server上都是必备元素；一旦注册上去即可在{@link com.netflix.discovery.EurekaClient} 看得到主机名【又名虚IP地址】；其实最关键的用处还是在于能被其他同被注册在一个Eureka Server实例所识别出来。
+ *
  * <P>
  * As requirements of registration, an id and an appname must be supplied. The id should be
  * unique within the scope of the appname.
@@ -45,6 +47,8 @@ public interface EurekaInstanceConfig {
     /**
      * Get the unique Id (within the scope of the appName) of this instance to be registered with eureka.
      *
+     * 获取应用ID
+     *
      * @return the (appname scoped) unique id for this instance
      */
     String getInstanceId();
@@ -52,12 +56,16 @@ public interface EurekaInstanceConfig {
     /**
      * Get the name of the application to be registered with eureka.
      *
+     * 获取应用名称
+     *
      * @return string denoting the name.
      */
     String getAppname();
 
     /**
      * Get the name of the application group to be registered with eureka.
+     *
+     * 获取应用的分组名
      *
      * @return string denoting the name.
      */
@@ -67,6 +75,8 @@ public interface EurekaInstanceConfig {
      * Indicates whether the instance should be enabled for taking traffic as
      * soon as it is registered with eureka. Sometimes the application might
      * need to do some pre-processing before it is ready to take traffic.
+     *
+     * 判断是否是一注册就立马提供服务【因为存在服务需要做前置的初始化操作】
      *
      * :( public API typos are the worst. I think this was meant to be "OnInit".
      *
@@ -78,6 +88,8 @@ public interface EurekaInstanceConfig {
      * Get the <code>non-secure</code> port on which the instance should receive
      * traffic.
      *
+     * 获取接收请求的非安全端口
+     *
      * @return the non-secure port on which the instance should receive traffic.
      */
     int getNonSecurePort();
@@ -85,6 +97,8 @@ public interface EurekaInstanceConfig {
     /**
      * Get the <code>Secure port</code> on which the instance should receive
      * traffic.
+     *
+     * 同上
      *
      * @return the secure port on which the instance should receive traffic.
      */
@@ -115,9 +129,15 @@ public interface EurekaInstanceConfig {
      * the instance from its view, there by disallowing traffic to this
      * instance.
      *
+     * 表明多久【秒级】这个Eureka Client需要向Eureka Server 发送心跳来表明客户端是存活状态；假如这个心跳不能在指定时间内进行触发那么Eureka Server 就会从他的视图中移除此
+     * 客户端也即不能路由到此实例上
+     *
      * <p>
      * Note that the instance could still not take traffic if it implements
      * {@link HealthCheckCallback} and then decides to make itself unavailable.
+     *
+     * 注意：假如此实例实现了{@link HealthCheckCallback}那么将一直无法提供服务并且把自己设置为不可用
+     *
      * </p>
      *
      * @return time in seconds
@@ -129,13 +149,17 @@ public interface EurekaInstanceConfig {
      * received the last heartbeat before it can remove this instance from its
      * view and there by disallowing traffic to this instance.
      *
+     * 表明多久【秒级】自从Eureka Server接收到最后一次心跳到从他的注册表中移除实例的时间
+     *
      * <p>
      * Setting this value too long could mean that the traffic could be routed
      * to the instance even though the instance is not alive. Setting this value
      * too small could mean, the instance may be taken out of traffic because of
      * temporary network glitches.This value to be set to atleast higher than
      * the value specified in {@link #getLeaseRenewalIntervalInSeconds()}
-     * .
+     *
+     * 把这个时间设置过长就代表及时此实例挂掉了也可以被路由到，设置这个值过小表明假如存在临时性的网络抖动也会脱离链路.所以这个值至少要比 {@link #getLeaseRenewalIntervalInSeconds()}设置的值要大。
+     *
      * </p>
      *
      * @return value indicating time in seconds.
@@ -178,6 +202,8 @@ public interface EurekaInstanceConfig {
      * automatically put an instance out of service after the instance is
      * launched and it has been disabled for traffic..
      *
+     *  AWS相关配置
+     *
      * @return the autoscaling group name associated with this instance.
      */
     String getASGName();
@@ -206,6 +232,8 @@ public interface EurekaInstanceConfig {
      * Returns the data center this instance is deployed. This information is
      * used to get some AWS specific instance information if the instance is
      * deployed in AWS.
+     *
+     *  AWS相关配置
      *
      * @return information that indicates which data center this instance is
      *         deployed in.

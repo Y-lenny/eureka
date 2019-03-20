@@ -19,6 +19,8 @@ import com.netflix.discovery.shared.LookupService;
  * This interface does NOT try to clean up the current client interface for eureka 1.x. Rather it tries
  * to provide an easier transition path from eureka 1.x to eureka 2.x.
  *
+ * 这个接口不会去试着清理当前客户端接口【Eureka 1.X】，而是通过提供一种更容易的过渡方案给到Eureka1.x 到 Eureka 2.x
+ *
  * EurekaClient API contracts are:
  *  - provide the ability to get InstanceInfo(s) (in various different ways)
  *  - provide the ability to get data about the local Client (known regions, own AZ etc)
@@ -31,12 +33,16 @@ public interface EurekaClient extends LookupService {
 
     // ========================
     // getters for InstanceInfo
+    // 获取实例接口
     // ========================
 
     /**
      * @param region the region that the Applications reside in
      * @return an {@link com.netflix.discovery.shared.Applications} for the matching region. a Null value
      *         is treated as the local region.
+     *
+     * 通过指定region获取应用列表
+     *
      */
     public Applications getApplicationsForARegion(@Nullable String region);
 
@@ -50,6 +56,8 @@ public interface EurekaClient extends LookupService {
 
     /**
      * Gets the list of instances matching the given VIP Address.
+     *
+     * 通过VIP获取实例列表
      *
      * @param vipAddress The VIP address to match the instances for.
      * @param secure true if it is a secure vip address, false otherwise
@@ -83,15 +91,21 @@ public interface EurekaClient extends LookupService {
 
     // ==========================
     // getters for local metadata
+    // 获取本地元数据
     // ==========================
 
     /**
      * @return in String form all regions (local + remote) that can be accessed by this client
+     *
+     * 获取所有的regions[local+remote]
+     *
      */
     public Set<String> getAllKnownRegions();
 
     /**
      * @return the current self instance status as seen on the Eureka server.
+     *
+     * 获取自身实例在Eureka Server的状态
      */
     public InstanceInfo.InstanceStatus getInstanceRemoteStatus();
 
@@ -135,6 +149,7 @@ public interface EurekaClient extends LookupService {
 
     // ===========================
     // healthcheck related methods
+    // 健康检查相关方法
     // ===========================
 
     /**
@@ -159,6 +174,8 @@ public interface EurekaClient extends LookupService {
      * and subsequently invoke the {@link HealthCheckHandler} in intervals specified
      * by {@link EurekaClientConfig#getInstanceInfoReplicationIntervalSeconds()}.
      *
+     * 一旦注册，Eureka Client就会首先就会更新应用实例的的健康检查的handler，随后在 {@link EurekaClientConfig#getInstanceInfoReplicationIntervalSeconds()}指定的时间频率范围内触发检查更新
+     *
      * @param healthCheckHandler app specific healthcheck handler.
      */
     public void registerHealthCheck(HealthCheckHandler healthCheckHandler);
@@ -169,7 +186,9 @@ public interface EurekaClient extends LookupService {
      * Once registered, the eureka client will invoke {@link EurekaEventListener#onEvent} 
      * whenever there is a change in eureka client's internal state.  Use this instead of 
      * polling the client for changes.  
-     * 
+     *
+     * 一旦注册，当Eureka Client状态变动后这个监听事件将会触发；使用这种方式可以取代轮询客户端状态的方式
+     *
      * {@link EurekaEventListener#onEvent} is called from the context of an internal thread 
      * and must therefore return as quickly as possible without blocking.
      * 
@@ -180,7 +199,7 @@ public interface EurekaClient extends LookupService {
     /**
      * Unregister a {@link EurekaEventListener} previous registered with {@link EurekaClient#registerEventListener}
      * or injected into the constructor of {@link DiscoveryClient}
-     * 
+     * 取消注册
      * @param eventListener
      * @return True if removed otherwise false if the listener was never registered.
      */
@@ -193,9 +212,11 @@ public interface EurekaClient extends LookupService {
 
     // =============
     // other methods
+    // 其他方法
     // =============
 
     /**
+     * 关闭Eureka Client，也会发送一条登记信息到Eureka Server
      * Shuts down Eureka Client. Also sends a deregistration request to the eureka server.
      */
     public void shutdown();
