@@ -26,14 +26,20 @@ import com.netflix.discovery.shared.transport.EurekaTransportConfig;
  * Configuration information required by the eureka clients to register an
  * instance with <em>Eureka</em> server.
  *
+ * 接口用途：为了满足Eureka Client 在向Eureka Server 注册时所需要的配置信息
+ *
  * <p>
  * Most of the required information is provided by the default configuration
  * {@link DefaultEurekaClientConfig}. The users just need to provide the eureka
  * server service urls. The Eureka server service urls can be configured by 2
  * mechanisms
  *
- * 1) By registering the information in the DNS. 2) By specifying it in the
- * configuration.
+ * 大部分必备信息已经在默认配置{@link DefaultEurekaClientConfig}中设置好了，用户只需要提供Eureka Server ServiceUrl;可以通过两种机制来配置
+ *
+ * 1) By registering the information in the DNS.
+ * 配置在DNS上
+ * 2) By specifying it in the configuration.
+ * 配置在配置文件里
  * </p>
  *
  *
@@ -42,6 +48,8 @@ import com.netflix.discovery.shared.transport.EurekaTransportConfig;
  * VIPAddress), the most common way of doing it or by other means to get the
  * information necessary to talk to other instances registered with
  * <em>Eureka</em>.
+ *
+ * 一旦客户端注册了，用户就可以通过VIP从{@link EurekaClient}查看到配置信息；
  *
  * <p>
  * Note that all configurations are not effective at runtime unless and
@@ -57,7 +65,7 @@ public interface EurekaClientConfig {
     /**
      * Indicates how often(in seconds) to fetch the registry information from
      * the eureka server.
-     *
+     * 表明多久【秒级别】一次从Eureka Server 获取注册表信息
      * @return the fetch interval in seconds.
      */
     int getRegistryFetchIntervalSeconds();
@@ -65,6 +73,8 @@ public interface EurekaClientConfig {
     /**
      * Indicates how often(in seconds) to replicate instance changes to be
      * replicated to the eureka server.
+     *
+     * 表明多久【秒级别】复制一次客户端实例改变的内容到Eureka Server
      *
      * @return the instance replication interval in seconds.
      */
@@ -84,6 +94,8 @@ public interface EurekaClientConfig {
      * Eureka servers could be added or removed and this setting controls how
      * soon the eureka clients should know about it.
      * </p>
+     *
+     * Eureka Server 可以新增也可以提出；这个设置控制多久Eureka Client 知道应该知道Eureka Server变更了
      *
      * @return the interval to poll for eureka service url changes.
      */
